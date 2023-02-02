@@ -140,22 +140,7 @@ BVector Boid::steer(const BVector &target)
   }
 }
 
-void Boid::resultantforce(BVector &v, BVector &u, BVector &w)
-{
-  m_acceleration = m_acceleration + v + u + w;
-  m_acceleration.limitsize(maxAcc);
-}
-
-void Boid::setRandomValues() {
-  std::random_device seed;
-  std::uniform_real_distribution<float> distPos(0, BVector::width());
-  std::uniform_real_distribution<float> distVel(-maxVel, maxVel);
-  m_position.setvalue(distPos(seed), distPos(seed));
-  m_velocity.setvalue(distVel(seed), distVel(seed));
-}
-
-
-void Boid::newvalues(const std::vector<Boid> &boids)
+void Boid::resultantforce(const std::vector<Boid> &boids)
 {
   // creiamo un vettore per ogni funzione
   BVector sep = separation(boids) * m_sepCoef;
@@ -167,8 +152,21 @@ void Boid::newvalues(const std::vector<Boid> &boids)
   //ali.scalarMul(aliCoef);
   //coh.scalarMul(cohCoef);
 
-  resultantforce(sep, ali, coh); // somma i contributi di ogni funzione
+  m_acceleration = sep + ali + coh;
+  m_acceleration.limitsize(maxAcc);
+}
 
+void Boid::setRandomValues() {
+  std::random_device seed;
+  std::uniform_real_distribution<float> distPosW(0, BVector::width());
+  std::uniform_real_distribution<float> distPosH(0, BVector::height());
+  std::uniform_real_distribution<float> distVel(-maxVel, maxVel);
+  m_position.setvalue(distPosW(seed), distPosH(seed));
+  m_velocity.setvalue(distVel(seed), distVel(seed));
+}
+
+void Boid::newvalues()
+{
   // update delle velocità e posizioni con reset accelerazione.
   m_velocity = m_velocity + m_acceleration;
   m_velocity.limitsize(maxVel);
@@ -177,11 +175,11 @@ void Boid::newvalues(const std::vector<Boid> &boids)
     m_position.setX(m_position.x() + BVector::width());
   if (m_position.y() < 0)
     m_position.setY(m_position.y() + BVector::height());
-  if (m_position.x() > 1000)
+  if (m_position.x() > BVector::width())
     m_position.setX(m_position.x() - BVector::width());
-  if (m_position.y() > 1000)
+  if (m_position.y() > BVector::width())
     m_position.setY(m_position.y() - BVector::height());
-  m_acceleration.setvalue(0,0);
+  //m_acceleration.setvalue(0,0);
 }
 
 // Si applica ad un boid e ritorna "sum".

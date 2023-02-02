@@ -36,7 +36,6 @@ private:
   BVector steer(const BVector &target);
   BVector alignment(const std::vector<Boid> &boids);
   BVector cohesion(const std::vector<Boid> &boids);
-  void resultantforce(BVector &v, BVector &u, BVector &w);
 public:
   Boid() {};
   Boid(double s, double c, double a, int n) 
@@ -58,7 +57,8 @@ public:
 
 
   /*BVector seek(BVector v);*/
-  void newvalues(const std::vector<Boid> &boids);
+  void resultantforce(const std::vector<Boid> &boids);
+  void newvalues();
   float meanDist(std::vector<Boid> &boids);
   float meanVelX(std::vector<Boid> &boids);
   float meanVelY(std::vector<Boid> &boids);

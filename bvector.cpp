@@ -19,7 +19,6 @@ void BVector::setvalue(float x, float y)
 
 void BVector::limitsize(double max)
 {
-
   float n = norm();
   if (n > max)
   {
